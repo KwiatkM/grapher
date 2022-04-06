@@ -3,9 +3,9 @@
 
 #include <stdio.h>
 
-typedef struct e {
+typedef struct f {
 int nr_wierz;
-struct e * next;
+struct f * next;
 } pkolejka_t;
 
 int* poprzednik;

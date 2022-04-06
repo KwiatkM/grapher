@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-typedef struct e {
+typedef struct {
 double right;
 double down;
 } wierzcholek_t;
