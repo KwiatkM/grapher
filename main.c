@@ -11,8 +11,10 @@
 
 int main(int argc, char** argv){
 
+    wierzcholek_t * graf;
     char * file_out_graph = "file_out_graph";
     FILE * out;
+    FILE * in;
     char * file_in = NULL;
     char * file_out_path = "stdout";
     int x = 5, y = 5, wierzcholek_1 = 0, wierzcholek_2 = 1;
@@ -25,9 +27,6 @@ int main(int argc, char** argv){
             printf("niepoprawny argument wywolania: %s\n", argv[i]);
             return 1;
         }
-
-        
-
         switch(argv[i][1])
         {
             case 'o':
@@ -144,33 +143,55 @@ printf("szansa: %f\n\n", szansa);
 #endif
 
 
-wierzcholek_t * graf = kontenerInit(x,y);
+if(file_in != NULL){
+    
 
-srand(time(NULL));
+in = fopen(file_in, "r");
+if ( in == NULL){
+    fprintf(stderr, "%s: Nie udalo sie otworzyc pliku %s\n", argv[0], file_in);
+    return 1;
+}
+fscanf(in, "%d %d\n", &x, &y);
+graf = kontenerInit(x,y);
+
+if(wczytaj_graf(graf, x, y, in) == 1){
+    fclose(in);
+    fprintf(stderr, "%s: plik %s zawiera niepoprawnie zapisany graf\n", argv[0], file_in);
+    return 1;
+};
+fclose(in);
+} 
+else
+{
+graf = kontenerInit(x,y);
 
 // wypełnienie grafu losowymi wartościami krawędzi
+srand(time(NULL));
 for (i = 0; i< x*y; i++){
 
+    // sprawdzenie, czy wierzchołek ma krawędź z prawej
     if((i+1)%y != 0){
         (graf+i)->right = ((double)rand()/RAND_MAX) * (waga_od + (waga_do - waga_od));
     }
 
+    // sprawdzenie, czy wierzchołek ma krawędź u dołu
     if(i < ((x*y)-y)){
         (graf+i)->down = ((double)rand()/RAND_MAX) * (waga_od + (waga_do - waga_od));
     }
 }
 
-
 out = fopen( file_out_graph, "w" );
-    if(out == NULL) return 1;
-
+if(out == NULL){
+    printf("%s: nie udalo sie otworzyc pliku %s\n", argv[0], file_out_graph);
+}
 zapiszGraf(graf,x,y,out);
-
 fclose(out);
- 
+}
 
 
 
+free(graf);
+printf("koniec");
 return 0;
 }
 

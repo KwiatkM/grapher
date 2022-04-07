@@ -11,7 +11,8 @@ double down;
 // inicjalizajca konteneru na graf
 wierzcholek_t * kontenerInit (int x, int y);
 
-int krawedzDodaj (int x, int y, int nr_w_1, int nr_w_2, double wartosc);
+// wczytanie wierzchołka z pliku
+int wczytaj_graf (wierzcholek_t * graf, int x, int y, FILE * in);
 
 int wagiWypisz (int x, int y, int nr_w, char * out);
 
