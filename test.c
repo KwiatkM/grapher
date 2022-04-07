@@ -46,7 +46,7 @@ int main(int argc, char **argv){
                 break;
             }
             case 't':{
-                if(optarg = NULL) //jesli nei podamy -t to waga_do = 100.0
+                if(optarg == NULL) //jesli nei podamy -t to waga_do = 100.0
                     waga_do = 100.0;
                 else
                     waga_do = atof(optarg) >= 0.0 && atof(optarg) <= 100.0? atof(optarg) : 100.0;  //jesli podamy wartosc w zakresie to dobrze, jesli nie to waga_do = 100.0
