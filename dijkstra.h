@@ -1,25 +1,29 @@
 #ifndef DIJ
 #define DIJ
 
-#include <stdio.h>
 
 typedef struct f {
 int nr_wierz;
 struct f * next;
+struct f * prev;
 } pkolejka_t;
 
-int* poprzednik;
-double* odleglosc;
-char* odwiedzono;
+extern int * poprzednik;
+extern double * odleglosc;
+extern char * odwiedzono;
 
 int dijTabInit (int x, int y);
 
-pkolejka_t * pKolejkaInit ( void );
+int pKolejkaDodaj ( pkolejka_t ** kolejka, int nr_wierz );
 
-int pKolejkaDodaj (int nr_wierz );
+int pKolejkaZdejmij ( pkolejka_t ** kolejka );
 
-int pKolejkaZdejmij ( void );
+int pKolejkaAktualizuj (pkolejka_t ** kolejka, int nr_w);
+
+int pKolejkaWypisz ( pkolejka_t * kolejka );
 
 int dijkstra ( int w_start );
+
+int dijTabFree( void );
 
 #endif

@@ -9,6 +9,10 @@
 
 #define DEBUGG
 
+int * poprzednik;
+double * odleglosc;
+char * odwiedzono;
+
 int main(int argc, char** argv){
 
     wierzcholek_t * graf;
@@ -171,12 +175,14 @@ for (i = 0; i< x*y; i++){
 
     // sprawdzenie, czy wierzchołek ma krawędź z prawej
     if((i+1)%y != 0){
-        (graf+i)->right = ((double)rand()/RAND_MAX) * (waga_od + (waga_do - waga_od));
+        if((double)rand()/RAND_MAX < szansa)    
+            (graf+i)->right = ((double)rand()/RAND_MAX) * (waga_od + (waga_do - waga_od));
     }
 
     // sprawdzenie, czy wierzchołek ma krawędź u dołu
     if(i < ((x*y)-y)){
-        (graf+i)->down = ((double)rand()/RAND_MAX) * (waga_od + (waga_do - waga_od));
+        if((double)rand()/RAND_MAX < szansa) 
+            (graf+i)->down = ((double)rand()/RAND_MAX) * (waga_od + (waga_do - waga_od));
     }
 }
 
@@ -188,10 +194,20 @@ zapiszGraf(graf,x,y,out);
 fclose(out);
 }
 
+pkolejka_t * kolejka = NULL;
 
+
+/*  
+// sprawdzienie, czy udało się przydzielić pamięć na tablice
+
+if(dijTabInit(x,y)==1){
+    printf("%s: nie udalo sie utworzyc tablic potrzebnych do algorytmu Dijkstry\n", argv[0]);
+    return 1; // trzeba też tak zrobić z alokacją pamięci na strukture grafu
+}
+*/
 
 free(graf);
-printf("koniec");
+printf("koniecc");
 return 0;
 }
 
