@@ -1,7 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "inout.h"
 #include "dijkstra.h"
 
+
+#define INFINITY 99999999999.9
 
 int dijTabInit (int x, int y){
 poprzednik = malloc(x * y * sizeof(int));
@@ -11,7 +14,7 @@ if ( poprzednik == NULL || odleglosc == NULL || odwiedzono == NULL) return 1;
 int i; 
 for (i = 0; i < x*y; i++){
     poprzednik[i] = -1;
-    odleglosc[i] = 99999999999.9; // trzeba ograniczyć maksymalną wagę do tej wartośći
+    odleglosc[i] = INFINITY; // trzeba ograniczyć maksymalną wagę do tej wartośći
     odwiedzono[i]= '0';
 }
 return 0;
@@ -127,8 +130,91 @@ while(head->prev != NULL){
 
 }
 
-int dijkstra ( int w_start ){
+int dijkstra ( wierzcholek_t * graf,  int w_start, int x, int y ){
 
+    pkolejka_t * kolejka = NULL;
+    dijTabInit(x,y);
+    odleglosc[w_start] = 0.0;
+    pKolejkaDodaj(&kolejka, w_start);
+
+    int u; // analizowany wierzchołek
+    while(kolejka != NULL){
+        u = pKolejkaZdejmij(&kolejka);
+        odwiedzono[u] = '1';
+
+        double tmp;
+        // wierzchołek po lewo
+        if(u%y != 0){ // jeżeli u ma wierzchołek po lewo
+            if((graf+u-1)->right > 0){ // jeżli istnieje przejście
+                if(odwiedzono[u-1] == '0'){ // jeżeli u nie był odwiedzony
+                    if(odleglosc[u-1] > odleglosc[u] + (graf+u-1)->right ){
+                        tmp = odleglosc[u-1]; // aby sprawdzić czy był wcześniej dodany do kolejki
+                        odleglosc[u-1] = odleglosc[u] + (graf+u-1)->right;
+                        poprzednik[u-1] = u;
+                        if(tmp = INFINITY) pKolejkaDodaj (&kolejka, u-1);
+                        else pKolejkaAktualizuj (&kolejka, u-1);
+                    }
+                }
+            }
+        }
+
+        // wierzchołek u góry
+        if((u-y)>=0){
+            if((graf+u-y)->down > 0){
+                if(odwiedzono[u-y] == '0'){
+                    if(odleglosc[u-y] > odleglosc[u] + (graf+u-y)->down){
+                        tmp = odleglosc[u-y];
+                        odleglosc[u-y] = odleglosc[u] + (graf+u-y)->down;
+                        poprzednik[u-y] = u;
+                        if(tmp = INFINITY) pKolejkaDodaj (&kolejka, u-y);
+                        else pKolejkaAktualizuj (&kolejka, u-y);
+                    }
+                }
+            }
+        }
+
+        //wierzchołek na prawo
+        if((u+1)%y != 0){ // jeżeli u ma wierzchołek po prawo
+            if((graf+u)->right > 0){ // jeżli istnieje przejście
+                if(odwiedzono[u+1] == '0'){ // jeżeli u nie był odwiedzony
+                    if(odleglosc[u+1] > odleglosc[u] + (graf+u)->right ){
+                        tmp = odleglosc[u+1]; // aby sprawdzić czy był wcześniej dodany do kolejki
+                        odleglosc[u+1] = odleglosc[u] + (graf+u)->right;
+                        poprzednik[u+1] = u;
+                        if(tmp = INFINITY) pKolejkaDodaj (&kolejka, u+1);
+                        else pKolejkaAktualizuj (&kolejka, u+1);
+                    }
+                }
+            }
+        }
+
+        //wierzchołek na dole
+        if(u < (x*y)-y){
+            if((graf+u)->down > 0){
+                if(odwiedzono[u+y] == '0'){
+                    if(odleglosc[u+y] > odleglosc[u] + (graf+u)->down){
+                        tmp = odleglosc[u+y];
+                        odleglosc[u+y] = odleglosc[u] + (graf+u)->down;
+                        poprzednik[u+y] = u;
+                        if(tmp = INFINITY) pKolejkaDodaj (&kolejka, u+y);
+                        else pKolejkaAktualizuj (&kolejka, u+y);
+                    }
+                }
+            }
+        }
+
+    }
+
+
+}
+
+int wypiszTablice(int x, int y){
+    int i;
+    for (i = 0; i < x*y; i++ ){
+        printf("wierzcholek %d: odw: %c, odl:%lf, poprz: %d\n", i, odwiedzono[i], odleglosc[i], poprzednik[i]);
+    }
+    return 0;
+    
 }
 
 int dijTabFree( void ){

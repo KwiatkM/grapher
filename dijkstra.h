@@ -22,7 +22,9 @@ int pKolejkaAktualizuj (pkolejka_t ** kolejka, int nr_w);
 
 int pKolejkaWypisz ( pkolejka_t * kolejka );
 
-int dijkstra ( int w_start );
+int dijkstra ( wierzcholek_t * graf,  int w_start, int x, int y );
+
+int wypiszTablice(int x, int y);
 
 int dijTabFree( void );
 
