@@ -6,13 +6,13 @@ int nr_wierz;
 struct e * next;
 } kolejka_t;
 
-//char * tab_odw;
+extern char * tab_odw;
 
 int bfsTabInit ( int x, int y );
 
-int kolejkaDodaj ( kolejka_t ** ost_elem, int nr_wierz );
+int kolejkaDodaj (kolejka_t ** pierw_elem,  kolejka_t ** ost_elem, int nr_wierz );
 
-int kolejkaZdejmij ( kolejka_t ** pierw_elem );
+int kolejkaZdejmij ( kolejka_t ** pierw_elem,  kolejka_t ** ost_elem );
 
 int bfs ( void );
 
