@@ -137,12 +137,13 @@ int dijkstra ( wierzcholek_t * graf,  int w_start, int x, int y ){
     odleglosc[w_start] = 0.0;
     pKolejkaDodaj(&kolejka, w_start);
 
+    double tmp;
     int u; // analizowany wierzchołek
     while(kolejka != NULL){
         u = pKolejkaZdejmij(&kolejka);
         odwiedzono[u] = '1';
 
-        double tmp;
+        
         // wierzchołek po lewo
         if(u%y != 0){ // jeżeli u ma wierzchołek po lewo
             if((graf+u-1)->right > 0){ // jeżli istnieje przejście
@@ -174,11 +175,11 @@ int dijkstra ( wierzcholek_t * graf,  int w_start, int x, int y ){
         }
 
         //wierzchołek na prawo
-        if((u+1)%y != 0){ // jeżeli u ma wierzchołek po prawo
-            if((graf+u)->right > 0){ // jeżli istnieje przejście
-                if(odwiedzono[u+1] == '0'){ // jeżeli u nie był odwiedzony
+        if((u+1)%y != 0){ 
+            if((graf+u)->right > 0){ 
+                if(odwiedzono[u+1] == '0'){ 
                     if(odleglosc[u+1] > odleglosc[u] + (graf+u)->right ){
-                        tmp = odleglosc[u+1]; // aby sprawdzić czy był wcześniej dodany do kolejki
+                        tmp = odleglosc[u+1]; 
                         odleglosc[u+1] = odleglosc[u] + (graf+u)->right;
                         poprzednik[u+1] = u;
                         if(tmp = INFINITY) pKolejkaDodaj (&kolejka, u+1);

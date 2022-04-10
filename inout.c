@@ -4,6 +4,7 @@
 
 wierzcholek_t * kontenerInit (int x, int y){
     wierzcholek_t * tmp = malloc (x * y * sizeof (wierzcholek_t));
+    if (tmp == NULL) exit(EXIT_FAILURE); // trzeba to poprawić
     int j;
     for (j = 0; j < x*y; j++){
         (tmp + j)->down = -1.1;
@@ -17,8 +18,8 @@ int wczytaj_graf (wierzcholek_t * graf, int x, int y, FILE * in){
     char buf[128];
 
     //tymczasowe wartości do przechowywania danych z linijek pliku
-    int a[4] = { -1 };
-    double aa[4] = { -1.1 };
+    int a[4] = { -1 }; //numery wierzchołków
+    double aa[4] = { -1.1 };    // wartości krawędzi
     int b;
 
     for (i = 0; i < x * y; i ++){
@@ -37,6 +38,8 @@ int wczytaj_graf (wierzcholek_t * graf, int x, int y, FILE * in){
                 if(a[j]<0) return 1;
                 if((graf+a[j])->down != aa[j]) return 1;
             } 
+            // dla wierzchołka u góry i po lewo sprawdzamy jedynie, czy wagi się zgadzają
+
             else if( a[j] == i + 1){
                 // jeżeli wierzchołek jest z prawej
                 if((i+1)%y == 0) return 1;

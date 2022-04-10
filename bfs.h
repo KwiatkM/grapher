@@ -14,7 +14,11 @@ int kolejkaDodaj (kolejka_t ** pierw_elem,  kolejka_t ** ost_elem, int nr_wierz 
 
 int kolejkaZdejmij ( kolejka_t ** pierw_elem,  kolejka_t ** ost_elem );
 
-int bfs ( void );
+int bfs (wierzcholek_t * graf,   int x, int y  );
+
+int wypiszTabBFS(int x, int y);
+
+int wypiszKolejke (kolejka_t * kolejka);
 
 
 #endif
