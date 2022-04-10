@@ -1,8 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <getopt.h>
+#include <string.h>
 
 #include "inout.h"
+#include "bfs.h"
 
 int main(int argc, char **argv){
     int opt, wymiar_x, wymiar_y, i, j;
@@ -81,20 +83,52 @@ int main(int argc, char **argv){
     }                                   /*KONIEC OBSLUGI OPCJI*/
     
     wierzcholek_t **graf = malloc(wymiar_x * sizeof(*graf));    /*alokujemy pamiec dla grafu*/
-    for(i=0; i<wymiar_x; i++){
+    for(i=0; i<wymiar_x; i++)
         graf[i] = malloc(wymiar_y * sizeof(*graf[i]));
-    }
+    
     
 
     createGraph(graf, wymiar_x, wymiar_y, waga_od, waga_do, szansa);  //wywolujemy funkcje tworzaca graf(nadajaca losowe przejcia i losowe wagi)
     
     saveGraph(graf, wymiar_x, wymiar_y, file_out_graph);    //wywolujemy funkcje zapisujaca stworzony graf do pliku
+    /*
+    //POCZATEK BFS
+    bfsTabInit(wymiar_x, wymiar_y);         //wywolujemy funkcje inicjująca tab_odw dla BFS-a(alokującą pamięć i nadająca podstawowe parametry)
+    kolejkaInit();                      //inicjujemy kolejke dla BFS(alokujemy pamiec dla pierwszej struktury, dodajemy do kolejki nr_wierz = 0 i dodajemy go do odwiedzonych)
+    if(bfs(graf, wymiar_x, wymiar_y) == 0)      //funkcja zwracajaca informacje o spojnosci grafu  
+        printf("Graf nie jest spojny.\n");
+    else
+        printf("Graf jest spojny.\n");
+    //KONIEC BFS
+    */
+   
+    char **tab_odw = malloc(wymiar_x * sizeof(*tab_odw));       //alokujemy pamiec dla tablicy odwiedzonych wierzcholkow
+    for(x=0; x<wymiar_x; x++)
+        tab_odw[x] = malloc(wymiar_y * sizeof(*tab_odw[x]));
+    
+    for(x=0; x<wymiar_x; x++)
+        for(y=0; y<wymiar_y; y++)     
+            strcpy(&tab_odw[x][y], "0");       //<--- domyslnie kazdy wierzcholek jest nieodwiedzony
+    
+    kolejka_t * poczatek = NULL;
+    kolejka_t * koniec = NULL;
+    kolejkaDodaj(&poczatek, &koniec, 0);    //<--- na poczatku dodajemy pierwszy wierzcholek do kolejki(z numerem 0)
+    strcpy(&tab_odw[0][0], "1");    //<--- dodajemy wierzchołek z nr_wierz == 0 do odwiedzonych
 
-    fclose(file_out_graph);    
+    if(bfs(graf, wymiar_x, wymiar_y, tab_odw) == 0)      //funkcja zwracajaca informacje o spojnosci grafu  
+        printf("Graf nie jest spojny.\n");
+    else
+        printf("Graf jest spojny.\n");
 
-    for(i=0; i<wymiar_x; i++){          /*zwalniamy pamiec dla grafu*/
+    
+    for(i=0; i<wymiar_x; i++)       //zwalniamy pamiec dla tab_odw
+        free(tab_odw[i]);
+    free(tab_odw);
+    
+    for(i=0; i<wymiar_x; i++)          //zwalniamy pamiec dla grafu
         free(graf[i]);  
-    }
     free(graf);
+
+    fclose(file_out_graph);
     return 0;
 }
