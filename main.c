@@ -5,7 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <time.h>
+
 
 #define DEBUGG
 
@@ -13,15 +13,18 @@ int * poprzednik;
 double * odleglosc;
 char * odwiedzono;
 
+char * tab_odw;
+
 int main(int argc, char** argv){
 
     wierzcholek_t * graf;
     char * file_out_graph = "file_out_graph";
     FILE * out;
+    FILE * path_out;
     FILE * in;
     char * file_in = NULL;
-    char * file_out_path = "stdout";
-    int x = 5, y = 5, wierzcholek_1 = 0, wierzcholek_2 = 1;
+    char * file_out_path = "path_out";
+    int x = 100, y = 100, wierzcholek_1 = 0, wierzcholek_2 = 1;
     double waga_od = 0.0, waga_do = 100.0, szansa = 1.0;
 
     int i = 1;
@@ -146,68 +149,105 @@ printf("waga do: %f\n", waga_do);
 printf("szansa: %f\n\n", szansa);
 #endif
 
-
-if(file_in != NULL){
-    
-
-in = fopen(file_in, "r");
-if ( in == NULL){
-    fprintf(stderr, "%s: Nie udalo sie otworzyc pliku %s\n", argv[0], file_in);
-    return 1;
-}
-fscanf(in, "%d %d\n", &x, &y);
-graf = kontenerInit(x,y);
-
-if(wczytaj_graf(graf, x, y, in) == 1){
-    fclose(in);
-    fprintf(stderr, "%s: plik %s zawiera niepoprawnie zapisany graf\n", argv[0], file_in);
-    return 1;
-};
-fclose(in);
-} 
-else
+// jeśli podano plik wejściowy z grafem
+if (file_in != NULL)
 {
-graf = kontenerInit(x,y);
 
-// wypełnienie grafu losowymi wartościami krawędzi
-srand(time(NULL));
-for (i = 0; i< x*y; i++){
+    in = fopen(file_in, "r");
+    if (in == NULL)
+    {
+        fprintf(stderr, "%s: Nie udalo sie otworzyc pliku %s\n", argv[0], file_in);
+        return 1;
+    }
+    fscanf(in, "%d %d\n", &x, &y);
 
-    // sprawdzenie, czy wierzchołek ma krawędź z prawej
-    if((i+1)%y != 0){
-        if((double)rand()/RAND_MAX < szansa)    
-            (graf+i)->right = ((double)rand()/RAND_MAX) * (waga_od + (waga_do - waga_od));
+    graf = kontenerInit(x, y);
+    if (graf == NULL)
+    {
+        printf("%s: nie udalo sie utworzyc struktury przechowujacej graf\n", argv[0]);
+        return 1;
     }
 
-    // sprawdzenie, czy wierzchołek ma krawędź u dołu
-    if(i < ((x*y)-y)){
-        if((double)rand()/RAND_MAX < szansa) 
-            (graf+i)->down = ((double)rand()/RAND_MAX) * (waga_od + (waga_do - waga_od));
+    if (wczytaj_graf(graf, x, y, in) == 1)
+    {
+        fclose(in);
+        fprintf(stderr, "%s: plik %s zawiera niepoprawnie zapisany graf\n", argv[0], file_in);
+        return 1;
     }
+    fclose(in);
+}
+else // jeśli nie podano pliku wejściowego
+{
+
+    graf = kontenerInit(x, y);
+    if (graf == NULL)
+    {
+        printf("%s: nie udalo sie utworzyc struktury przechowujacej graf\n", argv[0]);
+        return 1;
+    }
+
+    if(waga_od < 0.0) waga_od = 0.0;
+    if(waga_od > 100.0) waga_od = 100.0;
+    if(waga_do > 100.0) waga_do = 100.0;
+    if(waga_do < 0.0) waga_do = 0.0;
+    if(waga_od > waga_do){
+        int tmp = waga_do;
+        waga_do = waga_od;
+        waga_od = tmp;
+
+    if(szansa < 0.0) szansa = 0.0;
+    if(szansa > 1.0) szansa = 1.0;
+    
+    }
+    gen_graf(graf, x, y, waga_od, waga_do, szansa);
+
+    out = fopen(file_out_graph, "w");
+    if (out == NULL)
+    {
+        printf("%s: nie udalo sie otworzyc pliku %s\n", argv[0], file_out_graph);
+    }
+    zapiszGraf(graf, x, y, out);
+    fclose(out);
 }
 
-out = fopen( file_out_graph, "w" );
-if(out == NULL){
-    printf("%s: nie udalo sie otworzyc pliku %s\n", argv[0], file_out_graph);
+if(wierzcholek_1 < 0) wierzcholek_1 = 0;
+if(wierzcholek_2 >= x*y) wierzcholek_2 = (x*y)-1;
+
+dijkstra(graf, x, y, wierzcholek_1, wierzcholek_2);
+
+bfs(graf, x, y);
+
+path_out = fopen(file_out_path,"w");
+if(path_out == NULL){
+    printf("%s: nie udalo sie zapisac wyniku w pliku %s\n", argv[0], file_out_graph);
+    path_out = stdout;
 }
-zapiszGraf(graf,x,y,out);
-fclose(out);
-}
 
-pkolejka_t * kolejka = NULL;
+fprintf(path_out, "Wczytany graf:\n\n");
+fprintf(path_out, "Wymiary:\n");
+fprintf(path_out, "x = %d\n", x);
+fprintf(path_out, "y = %d\n\n", y);
+fprintf(path_out, "Wagi:\n");
+fprintf(path_out, "minimalna: %f\n", waga_od);
+fprintf(path_out, "maksymalna: %f\n\n", waga_do);
+fprintf(path_out, "Szansa na krawedz:\n");
+fprintf(path_out, "szansa = %0.2f%%\n\n", szansa*100);
+fprintf(path_out, "Indeks wierzcholka startowego: %d\n", wierzcholek_1);
+fprintf(path_out, "Indeks wierzcholka koncowego: %d\n\n", wierzcholek_2);
+fprintf(path_out, "Znaleziona najkrotsza sciezka:\n");
+wypisz_sciezke(path_out, wierzcholek_1,wierzcholek_2);
+fprintf(path_out,"\n");
+fprintf(path_out, "Dlugosc sciezki:\n");
+fprintf(path_out, "%lf\n\n", odleglosc[wierzcholek_2]);
+fprintf(path_out, "Graf spojny:\n");
+fprintf(path_out, "%s\n", czySpojny(x,y) == 1 ? "tak" : "nie");
 
+fclose(path_out);
 
-/*  
-// sprawdzienie, czy udało się przydzielić pamięć na tablice
-
-if(dijTabInit(x,y)==1){
-    printf("%s: nie udalo sie utworzyc tablic potrzebnych do algorytmu Dijkstry\n", argv[0]);
-    return 1; // trzeba też tak zrobić z alokacją pamięci na strukture grafu
-}
-*/
-
+BFSTabFree();
+dijTabFree();
 free(graf);
-printf("koniecc");
+printf("koniec");
 return 0;
 }
 

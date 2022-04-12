@@ -14,13 +14,13 @@ if ( poprzednik == NULL || odleglosc == NULL || odwiedzono == NULL) return 1;
 int i; 
 for (i = 0; i < x*y; i++){
     poprzednik[i] = -1;
-    odleglosc[i] = INFINITY; // trzeba ograniczyć maksymalną wagę do tej wartośći
+    odleglosc[i] = INFINITY; 
     odwiedzono[i]= '0';
 }
 return 0;
 }
 
-int pKolejkaDodaj (pkolejka_t ** kolejka,int nr_wierz ){
+static int pKolejkaDodaj (pkolejka_t ** kolejka,int nr_wierz ){
     pkolejka_t * tmp = malloc(sizeof(pkolejka_t));
     tmp->nr_wierz = nr_wierz;
     tmp->next = NULL;
@@ -52,7 +52,7 @@ int pKolejkaDodaj (pkolejka_t ** kolejka,int nr_wierz ){
     }
 }
 
-int pKolejkaZdejmij ( pkolejka_t ** kolejka ){
+static int pKolejkaZdejmij ( pkolejka_t ** kolejka ){
     if(*kolejka == NULL) return -1;
     int tmp = (*kolejka)->nr_wierz;
     pkolejka_t * tmp_k = *kolejka;
@@ -63,17 +63,7 @@ int pKolejkaZdejmij ( pkolejka_t ** kolejka ){
     
 }
 
-int pKolejkaWypisz ( pkolejka_t * kolejka  ){
-    if (kolejka == NULL) return -1;
-    while ( kolejka != NULL){
-        printf("%d - ", kolejka->nr_wierz);
-        kolejka = kolejka->next;
-    }
-    printf("\n");
-    return 0;
-}
-
-int pKolejkaAktualizuj (pkolejka_t ** kolejka, int nr_w){
+static int pKolejkaAktualizuj (pkolejka_t ** kolejka, int nr_w){
 // długość drogi wierzchołków może się tylko zmniejszać
 pkolejka_t * head = *kolejka;
 
@@ -130,7 +120,7 @@ while(head->prev != NULL){
 
 }
 
-int dijkstra ( wierzcholek_t * graf,  int w_start, int x, int y ){
+int dijkstra ( wierzcholek_t * graf,int x, int y, int w_start, int w_konc ){
 
     pkolejka_t * kolejka = NULL;
     dijTabInit(x,y);
@@ -142,7 +132,7 @@ int dijkstra ( wierzcholek_t * graf,  int w_start, int x, int y ){
     while(kolejka != NULL){
         u = pKolejkaZdejmij(&kolejka);
         odwiedzono[u] = '1';
-
+        if(u == w_konc) break;
         
         // wierzchołek po lewo
         if(u%y != 0){ // jeżeli u ma wierzchołek po lewo
@@ -218,9 +208,36 @@ int wypiszTablice(int x, int y){
     
 }
 
+int pKolejkaWypisz ( pkolejka_t * kolejka  ){
+    if (kolejka == NULL) return -1;
+    while ( kolejka != NULL){
+        printf("%d - ", kolejka->nr_wierz);
+        kolejka = kolejka->next;
+    }
+    printf("\n");
+    return 0;
+}
+
 int dijTabFree( void ){
     free(poprzednik);
     free(odleglosc);
     free(odwiedzono);
     return 0;
 }
+
+int wypisz_sciezke( FILE * out, int wierzch_start, int wierzch_konc){
+    int n = 1; // do wypisywania znakku \n po odpowiednij ilości wypisanych wierzchołków
+    int w = poprzednik[wierzch_konc];
+    fprintf(out, "%d ", wierzch_konc);
+    while (w != -1){
+      fprintf(out, "-> %d ", w);
+      w = poprzednik[w];
+      if( n == 10){
+          fprintf(out, "\n");
+          n = 0;
+      }
+      n++;
+
+    }
+    fprintf(out, "\n");
+} 

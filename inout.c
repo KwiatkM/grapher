@@ -1,16 +1,37 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 #include "inout.h"
+
 
 wierzcholek_t * kontenerInit (int x, int y){
     wierzcholek_t * tmp = malloc (x * y * sizeof (wierzcholek_t));
-    if (tmp == NULL) exit(EXIT_FAILURE); // trzeba to poprawić
+    if (tmp == NULL) return NULL;
     int j;
     for (j = 0; j < x*y; j++){
         (tmp + j)->down = -1.1;
         (tmp + j)->right = -1.1;
     }
     return tmp;
+}
+
+int gen_graf(wierzcholek_t * graf, int x, int y, double waga_od, double waga_do, double szansa){
+    srand(time(NULL));
+    int i;
+    for (i = 0; i< x*y; i++){
+
+        // sprawdzenie, czy wierzchołek ma krawędź z prawej
+        if((i+1)%y != 0){
+          if((double)rand()/RAND_MAX < szansa)    
+             (graf+i)->right = ((double)rand()/RAND_MAX) * (waga_od + (waga_do - waga_od));
+        }
+
+        // sprawdzenie, czy wierzchołek ma krawędź u dołu
+        if(i < ((x*y)-y)){
+            if((double)rand()/RAND_MAX < szansa) 
+                (graf+i)->down = ((double)rand()/RAND_MAX) * (waga_od + (waga_do - waga_od));
+        }
+    }
 }
 
 int wczytaj_graf (wierzcholek_t * graf, int x, int y, FILE * in){
@@ -60,10 +81,6 @@ int wczytaj_graf (wierzcholek_t * graf, int x, int y, FILE * in){
 
 }
 
-int wagiWypisz (int x, int y, int nr_w, char * out){
-
-}
-
 void wypisz_graf(wierzcholek_t * graf, int x, int y){
     int i;
     for (i=0; i < x*y; i++){
@@ -80,7 +97,7 @@ int zapiszGraf (wierzcholek_t * graf, int x, int y, FILE * out){
         fprintf(out, "\t");
         
         // krawędź górna
-        if((i-y)>=0){
+        if((i-y)>=0){ // jeżeli w ogóle istnieje
             fprintf(out, " %d :%0.16f ", i-y, (graf+i-y)->down);
         }
 
@@ -103,4 +120,3 @@ int zapiszGraf (wierzcholek_t * graf, int x, int y, FILE * out){
     }
     return 0;
 }
-

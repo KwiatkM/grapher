@@ -11,12 +11,14 @@ double down;
 // inicjalizajca konteneru na graf
 wierzcholek_t * kontenerInit (int x, int y);
 
+// generowanie losowych wartości krawędzi
+int gen_graf(wierzcholek_t * graf, int x, int y, double waga_od, double waga_do, double szansa);
+
 // wczytanie wierzchołka z pliku
 int wczytaj_graf (wierzcholek_t * graf, int x, int y, FILE * in);
 
-int wagiWypisz (int x, int y, int nr_w, char * out);
 
-// funkcja do testowania
+// ( do testów ) wypisuje wagi krawędzi zapisane w strukturze 
 void wypisz_graf(wierzcholek_t * graf, int x, int y);
 
 //zapis grafu do pliku 

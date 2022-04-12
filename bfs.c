@@ -13,9 +13,9 @@ int bfsTabInit ( int x, int y ){
     return 0;
 }
 
-// ----------------- KOLEJKA DO BFS -----------------
 
-int kolejkaDodaj (kolejka_t ** pierw_elem,  kolejka_t ** ost_elem, int nr_wierz ){
+// ----------------- KOLEJKA DO BFS -----------------
+static int kolejkaDodaj (kolejka_t ** pierw_elem,  kolejka_t ** ost_elem, int nr_wierz ){
     if(*ost_elem == NULL){
         kolejka_t * tmp = malloc( sizeof(kolejka_t));
         tmp->next = NULL;
@@ -33,8 +33,7 @@ int kolejkaDodaj (kolejka_t ** pierw_elem,  kolejka_t ** ost_elem, int nr_wierz 
 
 }
 
-
-int kolejkaZdejmij ( kolejka_t ** pierw_elem,  kolejka_t ** ost_elem ){
+static int kolejkaZdejmij ( kolejka_t ** pierw_elem,  kolejka_t ** ost_elem ){
     if(*pierw_elem == NULL){
         *ost_elem = NULL;
         return -1;// gdy kolejka jest pusta 
@@ -139,4 +138,19 @@ int wypiszKolejke (kolejka_t * kolejka){
     }
     printf("\n");
     return 0;
+}
+
+int BFSTabFree(void){
+    free(tab_odw);
+    return 0;
+}
+
+int czySpojny( int x, int y ){
+    // return 0 - niespójny
+    // return 1 - spójny
+    int i;
+    for( i = 0; i < x*y; i++){
+        if(tab_odw[i]=='0') return 0;
+    }
+    return 1;
 }
