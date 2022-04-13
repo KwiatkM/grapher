@@ -8,19 +8,19 @@ int nr_wierz;
 struct f * next;
 } kolejka_t;
 
-int x, y;
-char ** tab_odw;
+int x, y, nr;
+extern char *tab_odw;
 kolejka_t * koniec;
 kolejka_t * poczatek;
 
-void bfsTabInit (int wymiar_x, int wymiar_y);    
+static int bfsTabInit (int wymiar_x, int wymiar_y);    
 
-void kolejkaInit (void);
+static void kolejkaInit (kolejka_t ** first_elem, kolejka_t ** last_elem);
 
-int kolejkaDodaj (kolejka_t ** first_elem, kolejka_t ** last_elem, int nr_wierz);
+static int kolejkaDodaj (kolejka_t ** first_elem, kolejka_t ** last_elem, int nr_wierz);
 
-int kolejkaZdejmij (kolejka_t ** first_elem, kolejka_t ** last_elem);
+static int kolejkaZdejmij (kolejka_t ** first_elem, kolejka_t ** last_elem);
 
-int bfs (wierzcholek_t **graf, int wymiar_x, int wymiar_y, char **tab_odw);
+int bfs (wierzcholek_t **graf, int wymiar_x, int wymiar_y);
 
 #endif

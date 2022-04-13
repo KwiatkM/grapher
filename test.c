@@ -5,10 +5,11 @@
 
 #include "inout.h"
 #include "bfs.h"
+#include "dijkstra.h"
 
 int main(int argc, char **argv){
-    int opt, wymiar_x, wymiar_y, i, j;
-    double waga_od, waga_do, szansa;
+    int opt,  i, j, wymiar_x = 100, wymiar_y = 100;
+    double waga_od = 0.0, waga_do = 100.0, szansa = 1.0;
     FILE * file_out_graph;
     while((opt = getopt(argc, argv, "o:i:p:x:y:f:t:c:s:k:")) != -1){      /*POCZATEK OBSLUGI OPCJI*/
         switch(opt){
@@ -124,6 +125,10 @@ int main(int argc, char **argv){
     for(i=0; i<wymiar_x; i++)       //zwalniamy pamiec dla tab_odw
         free(tab_odw[i]);
     free(tab_odw);
+
+    free(poprzednik);
+    free(odleglosc);
+    free(odwiedzono);
     
     for(i=0; i<wymiar_x; i++)          //zwalniamy pamiec dla grafu
         free(graf[i]);  

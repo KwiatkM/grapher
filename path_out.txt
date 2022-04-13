@@ -1,0 +1,23 @@
+Wczytany graf:
+
+Wymiary:
+x = 6
+y = 4
+
+Wagi:
+minimalna: 20.400000
+maksymalna: 54.100000
+
+Szansa na krawedz:
+szansa = 80.00%
+
+Indeks wierzcholka startowego: 2
+Indeks wierzcholka koncowego: 11
+
+Znaleziona najkrotsza sciezka:
+11 -> 10 -> 9 -> 8 -> 4 -> 5 -> 1 -> 2 
+
+Dlugosc sciezki:
+142.735566
+
+Graf jest spojny.
