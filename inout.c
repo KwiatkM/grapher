@@ -23,18 +23,21 @@ int gen_graf(wierzcholek_t * graf, int x, int y, double waga_od, double waga_do,
         // sprawdzenie, czy wierzchołek ma krawędź z prawej
         if((i+1)%y != 0){
           if((double)rand()/RAND_MAX < szansa)    
-             (graf+i)->right = ((double)rand()/RAND_MAX) * (waga_od + (waga_do - waga_od));
+             (graf+i)->right = (((double)rand()/RAND_MAX) * (waga_do - waga_od) + waga_od );
         }
 
         // sprawdzenie, czy wierzchołek ma krawędź u dołu
         if(i < ((x*y)-y)){
             if((double)rand()/RAND_MAX < szansa) 
-                (graf+i)->down = ((double)rand()/RAND_MAX) * (waga_od + (waga_do - waga_od));
+                (graf+i)->down = (((double)rand()/RAND_MAX) * (waga_do - waga_od) + waga_od );
         }
     }
 }
 
 int wczytaj_graf (wierzcholek_t * graf, int x, int y, FILE * in){
+    // return 0 - graf wczytany prawidłowo
+    // return 1 - napotkano błędy 
+
     int i, j;
     char buf[128];
 
@@ -118,5 +121,10 @@ int zapiszGraf (wierzcholek_t * graf, int x, int y, FILE * out){
 
         fprintf(out, "\n");
     }
+    return 0;
+}
+
+int kontenerFree (wierzcholek_t * graf){
+    free(graf);
     return 0;
 }

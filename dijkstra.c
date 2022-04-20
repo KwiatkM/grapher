@@ -4,7 +4,6 @@
 #include "dijkstra.h"
 
 
-#define INFINITY 99999999999.9
 
 int dijTabInit (int x, int y){
 poprzednik = malloc(x * y * sizeof(int));
@@ -123,7 +122,7 @@ while(head->prev != NULL){
 int dijkstra ( wierzcholek_t * graf,int x, int y, int w_start, int w_konc ){
 
     pkolejka_t * kolejka = NULL;
-    dijTabInit(x,y);
+
     odleglosc[w_start] = 0.0;
     pKolejkaDodaj(&kolejka, w_start);
 
@@ -193,9 +192,8 @@ int dijkstra ( wierzcholek_t * graf,int x, int y, int w_start, int w_konc ){
                 }
             }
         }
-
     }
-
+    pkolejkaFree(kolejka);
 
 }
 
@@ -228,7 +226,7 @@ int dijTabFree( void ){
 int wypisz_sciezke( FILE * out, int wierzch_start, int wierzch_konc){
     int n = 1; // do wypisywania znakku \n po odpowiednij ilości wypisanych wierzchołków
     int w = poprzednik[wierzch_konc];
-    fprintf(out, "%d ", wierzch_konc);
+    if ( w != -1) fprintf(out, "%d ", wierzch_konc);
     while (w != -1){
       fprintf(out, "-> %d ", w);
       w = poprzednik[w];
@@ -241,3 +239,50 @@ int wypisz_sciezke( FILE * out, int wierzch_start, int wierzch_konc){
     }
     fprintf(out, "\n");
 } 
+
+int dijTabReset (int x, int y){
+    int i;
+    for (i = 0; i < x*y; i++){
+        poprzednik[i] = -1;
+        odleglosc[i] = INFINITY; 
+        odwiedzono[i]= '0';
+    }
+    return 0;
+}
+
+int podzelGraf ( wierzcholek_t * graf, int x, int y, int w_konc){
+    while( w_konc != -1){
+        // wierzchołek po lewo
+        if(w_konc%y != 0){ // jeżeli u ma wierzchołek po lewo
+            (graf+w_konc-1)->right = -1.1;
+        }
+
+        // wierzchołek na górze
+        if((w_konc-y)>=0){ 
+            (graf+w_konc-y)->down = -1.1;
+        }
+
+        // wierzchołek po prawo
+        if((w_konc+1)%y != 0){ 
+           (graf+w_konc)->right = -1.1;
+        }
+
+        // wierzchołek na dole
+        if(w_konc < (x*y)-y){ 
+            (graf+w_konc)->down = -1.1;
+        }
+
+        w_konc = poprzednik[w_konc];  
+    }
+    return 0;
+}
+
+int pkolejkaFree (pkolejka_t * kolejka){
+    pkolejka_t * tmp;
+    while (kolejka != NULL){
+        tmp = kolejka->next;
+        free(kolejka);
+        kolejka = tmp;
+    }
+    return 0;
+}

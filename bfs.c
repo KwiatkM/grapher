@@ -13,10 +13,17 @@ int bfsTabInit ( int x, int y ){
     return 0;
 }
 
+int bfsTabReset ( int x, int y ){
+    int i;
+    for( i = 0; i < x*y; i++){
+        tab_odw[i] = '0';
+    }
+    return 0;
+}
 
 // ----------------- KOLEJKA DO BFS -----------------
 static int kolejkaDodaj (kolejka_t ** pierw_elem,  kolejka_t ** ost_elem, int nr_wierz ){
-    if(*ost_elem == NULL){
+    if(*ost_elem == NULL){ // gdy kolejka jest pusta
         kolejka_t * tmp = malloc( sizeof(kolejka_t));
         tmp->next = NULL;
         tmp->nr_wierz = nr_wierz;
@@ -42,7 +49,7 @@ static int kolejkaZdejmij ( kolejka_t ** pierw_elem,  kolejka_t ** ost_elem ){
     kolejka_t * tmpk = *pierw_elem;
     int tmp = (*pierw_elem)->nr_wierz;
     *pierw_elem = (*pierw_elem)->next;
-    if(*pierw_elem == NULL) *ost_elem = NULL;
+    if(*pierw_elem == NULL) *ost_elem = NULL; // aby ost_elem nie wskazywał na nie istniejący element
     free(tmpk);
     return tmp;
 
@@ -65,16 +72,12 @@ wypisywać wartość -1 ()
 */
 // ----------------------------------------------------------
 
-
-int bfs ( wierzcholek_t * graf,   int x, int y  ){
+int bfs (wierzcholek_t * graf,   int x, int y, int w_start ){
     // inicjalizacja kolejki
     kolejka_t * koniec = NULL;
     kolejka_t * poczatek= NULL;
 
-    //inicjalizacja tablicy odwiedzonych
-    bfsTabInit(x,y);
-
-    int u = 0; // wierzchołek początkowy
+    int u = w_start; // wierzchołek początkowy
     tab_odw[u] = '1';
     kolejkaDodaj(&poczatek, &koniec, u);
     while(poczatek != NULL){
@@ -153,4 +156,26 @@ int czySpojny( int x, int y ){
         if(tab_odw[i]=='0') return 0;
     }
     return 1;
+}
+
+
+int wizualizuj_graf(FILE * out, int x, int y, int w_od, int w_do){
+    int i,n =0;
+    for( i = 0; i < x*y; i++){
+        if (tab_odw[i] == '1') {
+            if (i == w_od) fprintf(out, "od");
+            else if (i == w_do) fprintf(out, "do");
+            else fprintf(out, "[]");
+        }
+        else {
+            if (i == w_od) fprintf(out, "od");
+            else if (i == w_do) fprintf(out, "do");
+            else fprintf(out,"--");
+        }
+        n++;
+        if(n == y){
+            n = 0;
+            fprintf(out, "\n");
+        }
+    }
 }
